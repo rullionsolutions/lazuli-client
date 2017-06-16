@@ -568,7 +568,8 @@ x.ui.performAjaxSuccess = function (data_back, xml_http_request, reload_opts) {
     if (xml_http_request.status === 204) {      // "our" redirection...
         this.prompt_message = null;
         this.active = true;     // allow subsequent performAjax
-        reload_opts.force_load = true;
+        // this force_load true below causes two concurrent requests to the server....
+        // reload_opts.force_load = true;
         this.redirect(xml_http_request.getResponseHeader("Location"), reload_opts);
     } else {
         this.setLoadContent(data_back);
@@ -1398,6 +1399,18 @@ $(document).on("keyup", function (event) {
 $(document).on("keydown", "div.css_edit > input", function (event) {
     if (event.which === 13) {
         event.preventDefault();
+    }
+});
+
+
+$(document).on("click", "a[data-click='panel-collapse']", function (event) {
+    var icon_elmt = $(event.target).children("i");
+    if (icon_elmt.hasClass("fa-minus")) {
+        icon_elmt.removeClass("fa-minus");
+        icon_elmt.addClass("fa-plus");
+    } else {
+        icon_elmt.addClass("fa-minus");
+        icon_elmt.removeClass("fa-plus");
     }
 });
 

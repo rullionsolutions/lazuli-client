@@ -703,17 +703,32 @@ x.field.number.validate = function () {
     var str_val = this.getValue();
     var match = str_val.match(/^[-,\d\.]*$/);
     var num;
-
+    var message;
+    var type;
     x.field.validate.call(this);
     if (str_val && (!match || match.length < 1)) {
         this.addMessage('E', "invalid number");
     } else {
         num = parseFloat(str_val, 10);
         if (typeof this.server_data.min === "number" && num < this.server_data.min) {
-            this.addMessage('E', "lower than minimum value: " + this.server_data.min);
+            type = "E";
+            message = (this.server_data.min_message || "must not be less than {{min}")
+                .replace("{{min}}", this.server_data.min);
+        } else if (typeof this.server_data.soft_min === "number" && num < this.server_data.soft_min) {
+            type = "W";
+            message = (this.server_data.soft_min_message || "should not be less than {{min}}")
+                .replace("{{min}}", this.server_data.soft_min);
+        } else if (typeof this.server_data.max === "number" && num > this.server_data.max) {
+            type = "E";
+            message = (this.server_data.max_message || "must not be greater than {{max}}")
+                .replace("{{max}}", this.server_data.max);
+        } else if (typeof this.server_data.soft_max === "number" && num > this.server_data.soft_max) {
+            type = "W";
+            message = (this.server_data.soft_max_message || "should not be greater than {{max}}")
+                .replace("{{max}}", this.server_data.soft_max);
         }
-        if (typeof this.server_data.max === "number" && num > this.server_data.max) {
-            this.addMessage('E', "higher than maximum value: " + this.server_data.max);
+        if (message) {
+            this.addMessage(type, message.replace("{{val}}", str_val));
         }
     }
 };
