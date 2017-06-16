@@ -1,0 +1,14 @@
+{
+  "name": "lazuli-client",
+  "version": "1.0.0",
+  "description": "Client-side Static Resources",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:rullionsolutions/lazuli-client"
+  },
+  "author": "stephen.d.francis@gmail.com",
+  "license": "Apache-2.0",
+  "dependencies": {
+  }
+}
