@@ -1,0 +1,33 @@
+
+
+
+/* underline tooltips even before hover, unless the label is a unicode icon
+a[rel='tooltip'][title]						{ text-decoration: underline; }
+a[rel='tooltip'][title].css_uni_icon		{ text-decoration: none; }
+*/
+
+
+div.dropdown				{ display: inline; }
+img.ui-datepicker-trigger	{ cursor: pointer; margin-left: 4px; }
+.ui-datepicker {
+    z-index: 900;
+}
+
+
+.css_undo_link				{ font-weight: bold; text-decoration: underline; }
+
+
+.css_uni_icon				{ font-size: 10pt; font-weight: normal; margin-right: 4px; }
+.css_uni_icon:hover			{ text-decoration: none; color: black; }
+.css_uni_icon_lrg			{ font-size: 12pt; font-weight: bold; margin-right: 4px; }
+.css_uni_icon_lrg:hover		{ text-decoration: none; color: black; }
+.css_uni_icon_off			{ font-size: 10pt; margin-right: 4px; text-decoration: none; }
+.css_uni_icon_off:hover		{ text-decoration: none; }
+
+
+
+
+
+
+/* Buttons at bottom */
+
