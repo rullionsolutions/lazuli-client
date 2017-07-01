@@ -1612,7 +1612,7 @@ td.daterange                            { /*padding: 0;*/ background: url(/cdn/i
 
 .css_type_horizbuttons label    { display: inline; margin-left: 5px; margin-right: 10px; }
 
-div.css_type_textarea.css_disp > div > div.form-control-static {
+div.css_type_textarea.css_disp > div, td.css_type_textarea > div.css_type_textarea.css_disp {
                                 /* to work inside tables */ white-space: pre-wrap; /* css-3 */
                                 white-space: -moz-pre-wrap; /* Mozilla, since 1999 */   white-space: -pre-wrap; /* Opera 4-6 */
                                 white-space: -o-pre-wrap;    /* Opera 7 */              word-wrap: break-word;  /* Internet Explorer 5.5+ */
