@@ -493,6 +493,9 @@ x.ui.redirect = function (url, reload_opts) {
     if (typeof url === "string") {
         url = URI(url);
     }
+    if (!reload_opts) {
+        reload_opts = {};
+    }
     function appendParameter(param_id, param_val) {
         var frag = url.fragment();
         if (param_val !== undefined) {
@@ -517,7 +520,8 @@ x.ui.redirect = function (url, reload_opts) {
         this.close();
         window.location.href = url;
         if (reload_opts.force_load) {
-            window.location.reload();
+            // window.location.reload();
+            x.ui.main.load(uri, reload_opts);
         }
     }
 };

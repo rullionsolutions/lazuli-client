@@ -761,6 +761,14 @@ section                     { margin-bottom: 60px; }    /* not used yet */
     margin: 0 10px 10px 0;
 }
 
+#css_modal_links > ul { margin: 0; padding: 0; }
+#css_modal_links > ul > li {
+    list-style-type: none;
+    font-size: 12px;
+    display: inline-block;
+    margin: 0 10px 10px 0;
+}
+
 #css_page_buttons > ul { margin: 0; padding: 0; }
 #css_page_buttons > ul > li {
     font-size: 12px;
@@ -768,3 +776,10 @@ section                     { margin-bottom: 60px; }    /* not used yet */
     margin: 0 10px 10px 0;
 }
 
+#css_modal_buttons > ul { margin: 0; padding: 0; }
+#css_modal_buttons > ul > li {
+    list-style-type: none;
+    font-size: 12px;
+    display: inline-block;
+    margin: 0 10px 10px 0;
+}
