@@ -44,7 +44,7 @@ var steps = [
 		t = t && page.injectJs('../../../cdn/highcharts-3.0.10/highcharts.js');
 		t = t && page.injectJs('../../../cdn/highcharts-3.0.10/highcharts-more.js');
 		t = t && page.injectJs('../../../cdn/highcharts-3.0.10/exporting.js');
-        t = t && page.injectJs("../../../cdn/rsl_dev/render_charts.js");
+        t = t && page.injectJs("render_charts.js");
 //		console.log(t);
 	},
 	function () {
