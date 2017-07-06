@@ -397,34 +397,12 @@ x.ui.reload = function (params, reload_opts) {
     }
 };
 
-/*
-x.ui.navigateToNewPage = function (params, reload_opts) {
-    this.debug("navigateToNewPage(" + JSON.stringify(params) + ", " + JSON.stringify(reload_opts) + ")");
-
-    if (params.skin === "modal") {
-        reload_opts.closeable = true;
-        x.ui.modal.open();
-        x.ui.modal.performAjax(params, reload_opts);
-    } else if (reload_opts.open_new_window) {
-        window.open(this.getURIFromParams(params).href());
-    } else if (reload_opts.force_load) {
-        window.location.reload();
-    } else {
-        if (this.prompt_message && !confirm(this.prompt_message)) {
-            return;
-        }
-        this.expecting_unload = true;
-        this.active = true;
-        window.location = this.getURIFromParams(params).href();
-    }
-};
-*/
-
 x.ui.loadFirstTimePage = function (params, reload_opts) {
     reload_opts.first_time_for_page = true;
     reload_opts.content_scroll_top = 0;
     this.debug("loadFirstTimePage(" + JSON.stringify(params) + ", " + JSON.stringify(reload_opts) + ")");
     this.reload_count += 1;
+    this.activate();
     this.performAjax(params, reload_opts);
 };
 
@@ -439,34 +417,6 @@ x.ui.reloadCurrentPage = function (override_params, reload_opts) {
     reload_opts.content_scroll_top = $(this.getScrollElement()).scrollTop();
     this.performAjax(params, reload_opts);
 };
-
-/*
-x.ui.redirectAttribute = function (elmt, attr_id) {
-    var url = $(elmt).attr(attr_id || "href");
-    var reload_opts = {};
-    var keylist = [];
-
-    this.debug("redirectAttribute(" + elmt + ", " + attr_id + ")");
-    if (url && url !== "#") {             // no-op urls
-        reload_opts.refer_section_id = $(elmt).parents("div.css_section").attr("id");
-        reload_opts.confirm_text = $(elmt).data("confirm-text");
-        if ($(elmt).hasClass("css_bulk")) {
-            $(elmt).parents("table").eq(0).find("tr.css_mr_selected")
-            .each(function () {
-                keylist.push($(this).attr("data-key"));
-            });
-            reload_opts.selected_rows = keylist.join(",");
-        }
-        if ($(elmt).hasClass("css_force_load")) {
-            reload_opts.force_load = true;
-        }
-        if ($(elmt).attr("target") === "_blank") {
-            reload_opts.open_new_window = true;
-        }
-        this.redirect(url, reload_opts);
-    }
-};
-*/
 
 x.ui.getReloadOptsFromElement = function (elmt) {
     var keylist = [];
@@ -516,13 +466,11 @@ x.ui.redirect = function (url, reload_opts) {
         x.ui.modal.load(url, reload_opts);
     } else if (reload_opts && reload_opts.open_new_window) {
         window.open(url);
+    } else if (reload_opts && reload_opts.force_load) {
+        this.load(uri, reload_opts);
     } else {
         this.close();
         window.location.href = url;
-        if (reload_opts.force_load) {
-            // window.location.reload();
-            x.ui.main.load(uri, reload_opts);
-        }
     }
 };
 
@@ -540,31 +488,31 @@ x.ui.performAjax = function (params, reload_opts) {
     }
     this.deactivate();
 
-    $.ajax({
-        url: "dyn/?mode=exchange",
-        type: "POST",
-        data: $.param(params),
-        // CL-Blanking this request header allows IOS6 Safari and Chrome 24+ to work
-        // (May benefit other webkit based browsers)
-        // These headers were also blanked when this fix was initially added:
-        // - Authorization, If-None-Match
-        beforeSend: function (xhr) {        // IOS6 fix
-            xhr.setRequestHeader("If-Modified-Since", "");
-        },
-        success: function (data_back, text_status, xml_http_request) {
-            that.performAjaxSuccess(data_back, xml_http_request, reload_opts);
-        },
-        error: function (xml_http_request, text_status) {
-            that.performAjaxError(xml_http_request, text_status, params, reload_opts);
-        },
+    Pace.track(function(){
+        $.ajax({
+            url: "dyn/?mode=exchange",
+            type: "POST",
+            data: $.param(params),
+            // CL-Blanking this request header allows IOS6 Safari and Chrome 24+ to work
+            // (May benefit other webkit based browsers)
+            // These headers were also blanked when this fix was initially added:
+            // - Authorization, If-None-Match
+            beforeSend: function (xhr) {        // IOS6 fix
+                xhr.setRequestHeader("If-Modified-Since", "");
+            },
+            success: function (data_back, text_status, xml_http_request) {
+                that.performAjaxSuccess(data_back, xml_http_request, reload_opts);
+            },
+            error: function (xml_http_request, text_status) {
+                that.performAjaxError(xml_http_request, text_status, params, reload_opts);
+            },
+        });
     });
 };
 
 x.ui.forceLoad = function (url) {
-    if (url) {
-        window.location.href = url;
-    }
-    window.location.reload();
+    this.activate();
+    this.load(url || window.location.href);
 };
 
 x.ui.performAjaxSuccess = function (data_back, xml_http_request, reload_opts) {
@@ -1203,6 +1151,7 @@ x.ui.promptLogin = function (params) {
                 x.ui.main.forceLoad();
             } else {
                 x.ui.main.setTitle("Log-in");
+                x.ui.main.setLoadContent("");
                 that.setTitle("Log-in");
                 that.setLoadContent(data);
                 that.open(false);         // not closeable
@@ -1286,7 +1235,8 @@ x.ui.loginPhaseTwo = function (params, data) {
 //    var that = this;
     this.debug("loginPhaseTwo(" + JSON.stringify(params) + ", " + JSON.stringify(data) + ")");
     if (typeof data === "object" && data.action === "normal_login") {
-        x.ui.main.load(this.post_login_url, { force_load: true, });          // force full page load
+        x.ui.modal.close();
+        x.ui.main.forceLoad(this.post_login_url);          // force full page load
     } else {
         this.loginPhaseThree(params, data);
     }
